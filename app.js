@@ -37,22 +37,44 @@ router.delete('/question', async (ctx, next) => {
 // query
 router.get('/question/:id', async (ctx, next) => {
     const id = Number(ctx.params.id);
-    console.log(id)
     const result = await business.queryQuestion({ id: id });
-    console.log(JSON.stringify(result))
     let html = '';
-    if(result.ret === 0) {
-	html = `
+    if (result.ret === 0){
+    html = `
 	<div style="width: 100vw; height: 100vh; text-align: center;">
-	<h2>
-		${result.item[0].name}
-	<h2>	
- 	</div>
+        <h2>
+        <% if (item.name) { %>
+            <%= item.name %>
+        <% } %>
+        </h2>
+        <% if (item.A) { %>
+            <p>A:<%= item.A %></p>
+        <% } %>
+        <% if (item.B) { %>
+            <p>B:<%= item.B %></p>
+        <% } %>
+        <% if (item.C) { %>
+            <p>C:<%= item.C %></p>
+        <% } %>
+        <% if (item.D) { %>
+            <p>D: <%= item.D %></p>
+        <% } %>
+        <% if (item.E) { %>
+            <p>E: <%= item.E %></p>
+        <% } %>	
+        <% if (item.F) { %>
+            <p>F:<%= item.F %></p>
+        <% } %>
+    </div>
         `;
     } else {
-
+        html = `
+        <div>
+            发生了一些错误，请稍后重试
+        </div>
+        `;
     }
-    ctx.response.body = ejs.render(html, {});
+    ctx.response.body = ejs.render(html, {item: result.item[0]});
 });
 
 router.get('/question', async (ctx, next) => {
